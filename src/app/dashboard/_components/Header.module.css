@@ -1,0 +1,128 @@
+/* Header.module.css */
+
+/* --- Main Container --- */
+.headerContainer {
+  font-family: sans-serif;
+  color: #e0e0e0;
+  width: 100%;
+}
+
+/* --- 1. Top Bar --- */
+.topBar {
+  background-color: #3c4043;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 1rem;
+}
+
+.leftSection, .rightSection {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.logo {
+  width: 32px;
+  height: 32px;
+  background-color: #f9ab00;
+  border-radius: 50%;
+}
+
+.titleInput {
+  background: transparent;
+  border: 1px solid transparent;
+  outline: none;
+  color: #e0e0e0;
+  font-size: 1.1rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  transition: border-color 0.2s;
+}
+
+.titleInput:focus {
+  border-color: #4285f4;
+}
+
+.signOutButton {
+  background-color: #a0a0a0;
+  color: white;
+  border: none;
+  font-weight: 500;
+  padding: 0.5rem 1.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background-color 0.2s;
+}
+
+.signOutButton:hover {
+  background-color: #777777;
+}
+
+.userIcon {
+  width: 32px;
+  height: 32px;
+  background-color: #4f4f4f;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+/* --- 2. Menu Bar --- */
+.menuBar {
+  background-color: #2d2e30;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 1rem;
+  border-bottom: 1px solid #444;
+}
+
+.menuButton {
+  background: transparent;
+  border: none;
+  color: #d0d0d0;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background-color 0.2s;
+}
+
+.menuButton:hover {
+  background-color: #4a4a4a;
+}
+
+/* --- 3. Toolbar --- */
+.toolbar {
+  background-color: #202124;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem 1rem;
+}
+
+.toolbarButton {
+  background: transparent;
+  border: none;
+  color: #d0d0d0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background-color 0.2s;
+}
+
+.toolbarButton:hover {
+  background-color: #3c4043;
+}
+
+.spacer {
+  flex-grow: 1; /* This is a key part to push elements apart */
+}

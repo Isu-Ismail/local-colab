@@ -1,0 +1,48 @@
+/* CodeCell.module.css */
+
+:global(.monaco-editor.focused) {
+  outline: none !important;
+}
+
+.cellWrapper {
+  padding: 8px 0;
+  width: 100%;
+}
+
+.cellContainer {
+  position: relative;
+  background-color: transparent;
+  border-radius: 8px;
+  border: 1px solid #5f6368;
+  padding: 8px 4rem 8px 12px;
+  display: flex;
+  align-items: flex-start;
+  transition: background-color 0.2s;
+  box-sizing: border-box;
+  /* REMOVED: The "overflow: hidden;" rule was here. It is now gone. */
+}
+
+.cellContainer:hover {
+  background-color: #26272a;
+}
+
+.editorContainer {
+  flex-grow: 1;
+  min-width: 0;
+}
+
+/* ... the rest of the file remains the same ... */
+.runButtonContainer { display: flex; align-items: center; width: 48px; padding-top: 2px; color: #9aa0a6; }
+.cellExecution { font-family: monospace; font-size: 0.8rem; margin-right: 4px; }
+.runButton { background: none; border: 1px solid #5f6368; color: #e0e0e0; width: 24px; height: 24px; border-radius: 50%; cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 12px; opacity: 1; transition: background-color 0.2s; }
+.runButton:hover { background-color: #444; }
+.cellToolbar { position: absolute; top: 8px; right: 12px; display: flex; align-items: center; gap: 4px; background-color: #3c4043; padding: 4px 8px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); opacity: 0; transition: opacity 0.2s ease-in-out; z-index: 10; }
+.cellContainer:hover .cellToolbar { opacity: 1; }
+.toolbarButton { background: none; border: none; color: #e0e0e0; cursor: pointer; padding: 4px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+.toolbarButton:hover { background-color: #555; }
+.menuContainer { position: relative; }
+.dropdownMenu { position: absolute; top: 100%; right: 0; margin-top: 8px; background-color: #3c4043; border: 1px solid #5f6368; border-radius: 4px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); z-index: 20; width: 200px; padding: 8px 0; display: flex; flex-direction: column; }
+.menuItem { background: none; border: none; color: #e0e0e0; text-align: left; padding: 8px 16px; font-size: 0.9rem; cursor: pointer; width: 100%; }
+.menuItem:hover { background-color: #555; }
+.outputArea { padding-left: 60px; padding-right: 4rem; padding-top: 12px; padding-bottom: 12px; color: #e0e0e0; font-family: monospace; font-size: 0.9rem; white-space: pre-wrap; }
+@media (max-width: 768px) { .cellContainer { padding: 8px 3.5rem 8px 8px; } .cellToolbar { gap: 2px; padding: 2px 4px; } .outputArea { padding-left: 52px; padding-right: 1rem; } }

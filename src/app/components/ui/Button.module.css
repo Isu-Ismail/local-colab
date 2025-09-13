@@ -1,0 +1,15 @@
+
+.button {
+    padding: 0.5rem;
+    background-color: #0070f3;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: background-color 0.3s ease; /* Add a transition for a smooth effect */
+}
+
+.button:hover {
+    background-color: #064585; /* A slightly darker blue on hover */
+    
+}

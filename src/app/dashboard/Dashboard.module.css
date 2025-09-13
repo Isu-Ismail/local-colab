@@ -1,0 +1,17 @@
+/* Dashboard.module.css */
+
+.dashboardContainer {
+  background-color: #202124;
+  min-height: 100vh;
+  color: #e0e0e0;
+}
+
+.mainContent {
+  /* This sets padding for: Top, Right, Bottom, Left */
+  /* The "2cm" value creates the fixed gap on the right side */
+  padding: 1rem 2cm 1rem 3rem;
+  width: 100%;
+  box-sizing: border-box; /* Ensures padding is included in the width */
+}
+
+/* REMOVED the responsive media query */

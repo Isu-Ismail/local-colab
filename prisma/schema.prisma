@@ -1,0 +1,38 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db" // This tells Prisma to use a local SQLite file
+  //provider = "postgresql"
+  //url      = env("DATABASE_URL")
+}
+
+
+// User model: for storing user login information
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  role      String   @default("USER") // Add this line ("USER" or "ADMIN")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  notebooks Notebook[]
+}
+
+// Notebook model: for storing the user's code files
+model Notebook {
+  id        String   @id @default(cuid())
+  title     String
+  content   Json?    // Stores the notebook content in JSON format
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relation to the User model
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  String
+}
