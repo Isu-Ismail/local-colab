@@ -22,19 +22,6 @@ export default function CodeCell({ cell, onCodeChange, onRunCode, onDeleteCell, 
   const menuRef = useRef<HTMLDivElement>(null);
   
   // *** NEW: Define a custom theme for Monaco Editor ***
-  useEffect(() => {
-    loader.init().then(monaco => {
-      monaco.editor.defineTheme('colab-dark', {
-        base: 'vs-dark',
-        inherit: true,
-        rules: [],
-        colors: {
-          // This makes the editor background transparent
-          'editor.background': '#00000000', 
-        },
-      });
-    });
-  }, []);
 
   // (The rest of the component logic remains the same)
   useEffect(() => {
@@ -59,9 +46,21 @@ export default function CodeCell({ cell, onCodeChange, onRunCode, onDeleteCell, 
     });
   };
 
-  const handleCopyContent = async () => {
-    await navigator.clipboard.writeText(cell.content);
-    setIsMenuOpen(false);
+   const handleCopyContent = async () => {
+    try {
+      // Attempt to write the cell's content to the clipboard
+      await navigator.clipboard.writeText(cell.content);
+      // Provide success feedback to the user
+      alert('Cell content copied to clipboard!');
+    } catch (err) {
+      // Log the specific error for debugging
+      console.error('Failed to copy content: ', err);
+      // Provide failure feedback to the user
+      alert('Could not copy content. Please check browser permissions.');
+    } finally {
+      // Always close the menu
+      setIsMenuOpen(false);
+    }
   };
   
   const handleClearOutput = () => {
@@ -73,7 +72,7 @@ export default function CodeCell({ cell, onCodeChange, onRunCode, onDeleteCell, 
     <div className={styles.cellWrapper}>
       <div className={styles.cellContainer}>
         <div className={styles.runButtonContainer}>
-          <div className={styles.cellExecution}>[ ]</div>
+          <div className={styles.cellExecution}>[]</div>
           <button className={styles.runButton} onClick={() => onRunCode(cell)}>
             ▶
           </button>
