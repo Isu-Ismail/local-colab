@@ -40,19 +40,16 @@ export const authOptions: NextAuthOptions = {
   
   // 2. CRITICAL ADDITION: Add the callbacks section
   callbacks: {
-    // This is called when a JWT is created (i.e., on sign in).
     async jwt({ token, user }) {
-      // The user object is only available on the first call.
-      // We are adding the 'role' from the user object to the token.
       if (user) {
+        token.id = user.id; // Add the id to the token
         token.role = user.role;
       }
       return token;
     },
-    // This is called whenever a session is accessed.
     async session({ session, token }) {
-      // We are adding the 'role' from the token to the session object.
       if (session.user) {
+        session.user.id = token.id; // Add the id to the session
         session.user.role = token.role;
       }
       return session;

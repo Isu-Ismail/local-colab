@@ -1,5 +1,5 @@
 const { WebSocketServer } = require('ws');
-const { spawn } = require('child_process'); // Use spawn instead of exec
+const { spawn } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
@@ -16,54 +16,48 @@ wss.on('connection', ws => {
   console.log('Client connected');
 
   ws.on('message', message => {
-    const { code, inputs } = JSON.parse(message.toString());
+    const { code, inputs, userId } = JSON.parse(message.toString());
     console.log('Received code to execute');
 
     const uniqueId = crypto.randomUUID();
-    
     const tempFilePath = path.join(tempDir, `${uniqueId}.py`);
     fs.writeFileSync(tempFilePath, code);
-
-    // Arguments are now passed as an array, which is safer
+    
+    const userUploadDir = path.resolve(__dirname, 'uploads', userId);
+    
     const dockerArgs = [
-      'run',
-      '--rm',
-      '-i',
+      'run', '--rm', '-i',
       '--network', 'none',
       '--memory=256m',
       '--cpus=0.5',
       '-v', `${path.resolve(tempFilePath)}:/app/script.py:ro`,
+      '-v', `${userUploadDir}:/data:ro`,
       'python-runner',
       'python', 'script.py'
     ];
 
     const dockerProcess = spawn('docker', dockerArgs);
+    const timeout = setTimeout(() => { /* ... */ }, 10000);
 
-    // Set a timeout to kill the process
-    const timeout = setTimeout(() => {
-      dockerProcess.kill('SIGTERM'); // Kill the Docker process
-      ws.send('\nExecution timed out (10 seconds limit).');
-      console.log('Process killed due to timeout');
-    }, 10000); // 10 seconds
-
-    // Stream the output (stdout) back to the client
+    // --- DEBUGGING LOGS ADDED HERE ---
     dockerProcess.stdout.on('data', (data) => {
-      ws.send(data.toString());
+      const output = data.toString();
+      console.log(`[STDOUT]: ${output}`); // Log what we get from stdout
+      ws.send(output);
     });
 
-    // Stream any errors (stderr) back to the client
     dockerProcess.stderr.on('data', (data) => {
-      ws.send(data.toString());
+      const errorOutput = data.toString();
+      console.error(`[STDERR]: ${errorOutput}`); // Log what we get from stderr
+      ws.send(errorOutput);
     });
-
-    // When the process finishes, clean up
+    
     dockerProcess.on('close', (code) => {
-      clearTimeout(timeout); // Clear the timeout timer
-      fs.unlinkSync(tempFilePath); // Delete the temporary file
+      clearTimeout(timeout);
+      fs.unlinkSync(tempFilePath);
       console.log(`Docker process exited with code ${code}`);
     });
 
-    // Pipe the predefined inputs to the container's stdin
     if (inputs) {
       dockerProcess.stdin.write(inputs);
     }

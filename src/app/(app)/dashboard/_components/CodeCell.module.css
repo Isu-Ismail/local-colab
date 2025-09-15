@@ -3,6 +3,11 @@
 :global(.monaco-editor.focused) {
   outline: none !important;
 }
+/* A more accessible alternative */
+.editor-cell:focus-within {
+  outline: 2px solid #af2929; /* A subtle dark gray outline */
+  border-radius: 4px; /* Optional: matches the outline to your border-radius */
+}
 
 .cellWrapper {
   padding: 8px 0;

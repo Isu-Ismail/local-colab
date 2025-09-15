@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { signOut } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import { v4 as uuidv4 } from 'uuid';
 import CodeCell from './_components/CodeCell';
 import Header from './_components/Header';
@@ -23,18 +23,17 @@ interface NotebookInfo {
 }
 
 export default function DashboardClient() {
-  // --- STATE MANAGEMENT ---
+  const { data: session } = useSession();
   const [cells, setCells] = useState<Cell[]>([
     { id: uuidv4(), content: '# Welcome! Click File > New Notebook to start.', output: '' }
   ]);
   const [notebookTitle, setNotebookTitle] = useState("Untitled Notebook");
   const [notebooks, setNotebooks] = useState<NotebookInfo[]>([]);
   const [activeNotebookId, setActiveNotebookId] = useState<string | null>(null);
-  
+
   const ws = useRef<WebSocket | null>(null);
   const runningCellId = useRef<string | null>(null);
 
-  // --- DATA FETCHING & WEBSOCKETS ---
   useEffect(() => {
     fetchNotebooks();
   }, []);
@@ -49,10 +48,11 @@ export default function DashboardClient() {
         ));
       }
     };
-    return () => ws.current?.close();
+    return () => {
+      ws.current?.close();
+    };
   }, []);
 
-  // --- HANDLER FUNCTIONS ---
   const fetchNotebooks = async () => {
     const response = await fetch('/api/notebooks');
     if (response.ok) setNotebooks(await response.json());
@@ -78,26 +78,21 @@ export default function DashboardClient() {
     const isUpdating = activeNotebookId !== null;
     const url = isUpdating ? `/api/notebooks/${activeNotebookId}` : API_ENDPOINTS.notebooks.save;
     const method = isUpdating ? 'PUT' : 'POST';
-
     const contentToSave: NotebookContent = {
       cells: cells.map(({ id, content }) => ({ id, content })),
     };
-
     try {
       const response = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ title: notebookTitle, content: contentToSave }),
       });
-
       if (!response.ok) {
         const err = await response.json();
         throw new Error(err.error || 'Failed to save notebook');
       }
-
       alert(`Notebook "${notebookTitle}" saved successfully!`);
       fetchNotebooks();
-
       if (!isUpdating) {
         const savedNotebook = await response.json();
         setActiveNotebookId(savedNotebook.id);
@@ -107,16 +102,20 @@ export default function DashboardClient() {
       alert(`Error: ${error.message}`);
     }
   };
-  
+
   const handleCodeChange = (id: string, value: string) => {
     setCells(prev => prev.map(cell => (cell.id === id ? { ...cell, content: value } : cell)));
   };
 
-  const handleRunCode = (cell: Cell) => {
-    if (ws.current?.readyState === WebSocket.OPEN) {
+  const handleRunCode = (cell: Cell, inputs: string) => {
+    if (ws.current?.readyState === WebSocket.OPEN && session?.user?.id) {
       runningCellId.current = cell.id;
       setCells(prev => prev.map(c => (c.id === cell.id ? { ...c, output: '' } : c)));
-      ws.current.send(JSON.stringify({ code: cell.content, inputs: '' }));
+      ws.current.send(JSON.stringify({
+        code: cell.content,
+        inputs: inputs,
+        userId: session.user.id
+      }));
     }
   };
 
@@ -128,16 +127,15 @@ export default function DashboardClient() {
     setCells(prev => prev.filter(cell => cell.id !== idToDelete));
   };
 
-   const handleClearOutput = (idToClear: string) => {
-    setCells(prevCells =>
-      prevCells.map(cell =>
-        cell.id === idToClear ? { ...cell, output: '' } : cell
-      )
+  const handleClearOutput = (idToClear: string) => {
+    setCells(prev =>
+      prev.map(cell => (cell.id === idToClear ? { ...cell, output: '' } : cell))
     );
   };
 
   return (
     <div className={styles.dashboardContainer}>
+      {/* The onToggleFileMenu prop is now removed */}
       <Header
         notebookTitle={notebookTitle}
         setNotebookTitle={setNotebookTitle}
