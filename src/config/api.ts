@@ -1,17 +1,20 @@
-// This file will be the single source of truth for all backend endpoints.
-
-// Use environment variables for flexibility between development and production
-// Your colleague can run the frontend with a different backend just by changing these.
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
-const WS_URL = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8080';
+const API_BASE_URL = 'http://localhost:8000'; // Your FastAPI backend
+const WS_URL = 'ws://localhost:8080'; // Your WebSocket server
 
 export const API_ENDPOINTS = {
-  // We use NextAuth's built-in URLs, but if your colleague has a custom login:
-  login: `${API_BASE_URL}/auth/your-custom-login`, // Example placeholder
+  login: `${API_BASE_URL}/token`,
   
+  admin: {
+    users: `${API_BASE_URL}/admin/users`,
+    userById: (userId: string) => `${API_BASE_URL}/admin/users/${userId}`,
+  },
+
   notebooks: {
-    save: `${API_BASE_URL}/notebooks/save`,
-    load: (notebookId: string) => `${API_BASE_URL}/notebooks/${notebookId}`,
+    // We'll need to create these endpoints in FastAPI next
+    list: `${API_BASE_URL}/notebooks`,
+    create: `${API_BASE_URL}/notebooks`,
+    byId: (notebookId: string) => `${API_BASE_URL}/notebooks/${notebookId}`,
+    update: (notebookId: string) => `${API_BASE_URL}/notebooks/${notebookId}`,
   },
   
   execution: {

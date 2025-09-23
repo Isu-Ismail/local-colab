@@ -26,14 +26,19 @@ wss.on('connection', ws => {
     const userUploadDir = path.resolve(__dirname, 'uploads', userId);
     
     const dockerArgs = [
-      'run', '--rm', '-i',
+      'run',
+      '--rm',
+      '-i',
       '--network', 'none',
       '--memory=256m',
       '--cpus=0.5',
+      // CHANGE 1: Set the working directory to where the user files are.
+      '--workdir', '/data',
       '-v', `${path.resolve(tempFilePath)}:/app/script.py:ro`,
       '-v', `${userUploadDir}:/data:ro`,
       'python-runner',
-      'python', 'script.py'
+      // CHANGE 2: Use the full path to the script, since we are no longer in the /app directory.
+      'python', '/app/script.py'
     ];
 
     const dockerProcess = spawn('docker', dockerArgs);
